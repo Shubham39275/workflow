@@ -1,9 +1,9 @@
-name: CI Demo
+name: CI with CML
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -12,10 +12,21 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt || echo "no requirements.txt found"
+        run: |
+          pip install matplotlib pandas
 
-      - name: Run tests
-        run: echo "✅ CI pipeline ran successfully!"
+      - name: Run training & report
+        run: python report.py
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v1
+
+      - name: Post CML Report
+        run: |
+          echo "## Model Report" > report.md
+          cat metrics.csv >> report.md
+          echo "![Accuracy](accuracy.png)" >> report.md
+          cml comment create report.md
