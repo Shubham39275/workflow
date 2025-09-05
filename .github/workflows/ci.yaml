@@ -19,7 +19,7 @@ jobs:
           pip install matplotlib pandas
 
       - name: Run training & report
-        run: python report.py
+        run: python ./report.py
 
       - name: Setup CML
         uses: iterative/setup-cml@v1
